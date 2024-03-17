@@ -1,15 +1,17 @@
 #include <SFML/Graphics.hpp>
 #include <iostream>
-#include "plant.h"
+#include "Plant.h"
+#include "Predator.h"
 #include "map.h"
 #include "settings.h"
 #include <set>
 
+void createPredators(int amount);
 void createPlants(int amount);
 
 int main() {
     Image map_image;//объект изображения для карты
-    map_image.loadFromFile("C:/Users/Anton/CLionProjects/erg/Ecosystem/textures/map2.png");//загружаем файл для карты
+    map_image.loadFromFile("C:/Users/Anton/CLionProjects/erg/Ecosystem/textures/map3.png");//загружаем файл для карты
     Texture map;//текстура карты
     map.loadFromImage(map_image);//заряжаем текстуру картинкой
     Sprite s_map;//создаём спрайт для карты
@@ -24,7 +26,8 @@ int main() {
     float updateDirTimer = 0;
     float CurrentFrame = 0; //хранит текущий кадр
     Clock clock;
-    createPlants(startSettings::plantsAmount);
+    createPlants(startSettings::PlantsAmount);
+    createPredators(startSettings::PredatorsAmount);
 
     while (window.isOpen()) {
 
@@ -40,14 +43,16 @@ int main() {
         }
 
         if (updateDirTimer>200){
-            Plant::updateDirPlants();
+            Predator::updateDirPredators();
             updateDirTimer=0;
         }
         CurrentFrame += 0.012*time;
-        if (CurrentFrame > 3) CurrentFrame -= 3;
-        Plant::plantsUpdate(CurrentFrame,time);
+        if (CurrentFrame > 24) CurrentFrame -= 24;
+        Plant::PlantsUpdate(CurrentFrame,time);
+        Predator::PredatorsUpdate(CurrentFrame,time);
 
         window.clear(Color(200,255,200));
+        //window.clear(Color(0,0,0));
         /////////////////////////////Рисуем карту/////////////////////
         for (int i = 0; i < HEIGHT_MAP; i++)
             for (int j = 0; j < WIDTH_MAP; j++)
@@ -63,16 +68,24 @@ int main() {
             }
         /////////////////////////////////////////////////////////////////
         Plant::drawPlants(&window);
+        Predator::drawPredators(&window);
         window.display();
-        //std::cout << Plant::getAmountOfPlants() << std::endl;
+        //std::cout << Predator::getAmountOfPredators() << std::endl;
     }
 
     return 0;
 }
 
+void createPredators(int amount) {
+    for (int i = 0; i < amount; ++i) {
+        new Predator (rand()%(startSettings::windowWidth-128)+64, //64 32
+                   rand()%(startSettings::windowHeight-128)+64,32,32);
+    }
+}
+
 void createPlants(int amount) {
     for (int i = 0; i < amount; ++i) {
-        new Plant (rand()%(startSettings::windowWidth-64)+32,
-                   rand()%(startSettings::windowHeight-64)+32,32,32);
+        new Plant (rand()%(startSettings::windowWidth-128)+64, //64 32
+                      rand()%(startSettings::windowHeight-128)+64,32,32);
     }
 }

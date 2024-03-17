@@ -1,12 +1,13 @@
 cmake_minimum_required(VERSION 3.26)
 project(Ecosystem)
 
-set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_STANDARD 17)
 
 # Исходные файлы
 set(SOURCE_FILES
         src/main.cpp
-        src/plant.cpp)
+        src/Predator.cpp
+        src/Plant.cpp)
 
 # Название исполняемого файла
 add_executable(Ecosystem ${SOURCE_FILES})

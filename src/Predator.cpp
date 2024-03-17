@@ -1,10 +1,10 @@
-#include "Plant.h"
+#include "Predator.h"
 #include "map.h"
 #include <iostream>
 
-std::set<Plant*> Plant::PlantsList;
+std::set<Predator*> Predator::PredatorsList;
 
-/*void Plant::update(float time) //функция "оживления" объекта класса. update - обновление. принимает в себя время SFML , вследствие чего работает бесконечно, давая персонажу движение.
+void Predator::update(float time) //функция "оживления" объекта класса. update - обновление. принимает в себя время SFML , вследствие чего работает бесконечно, давая персонажу движение.
 {
     if (int(y / 32)<0 || int(x / 32)<0 || int(y / 32)>=HEIGHT_MAP || int(x / 32)>=WIDTH_MAP) delete this;
 
@@ -18,10 +18,10 @@ std::set<Plant*> Plant::PlantsList;
     x += dx*time;
     y += dy*time;
     sprite.setPosition(x,y);
-    //interactionWithMap();
-}*/
+    interactionWithMap();
+}
 
-/*void Plant::interactionWithMap()//ф-ция взаимодействия с картой
+void Predator::interactionWithMap()//ф-ция взаимодействия с картой
 {
     if (TileMap[int(y / 32)][int(x / 32)] == '0')//если наш квадратик соответствует символу 0 (стена), то проверяем "направление скорости" персонажа:
     {
@@ -30,4 +30,4 @@ std::set<Plant*> Plant::PlantsList;
         if (dx>0) { dir=1; }
         if (dx<0) { dir=0; }
     }
-}*/
+}
