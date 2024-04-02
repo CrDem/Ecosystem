@@ -7,6 +7,7 @@ set(CMAKE_CXX_STANDARD 17)
 set(SOURCE_FILES
         src/main.cpp
         src/Predator.cpp
+        src/Herbivore.cpp
         src/Plant.cpp)
 
 # Название исполняемого файла
