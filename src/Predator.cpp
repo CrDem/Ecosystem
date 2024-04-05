@@ -4,23 +4,43 @@
 #include "Herbivore.h"
 
 std::list<Predator*> Predator::PredatorsList;
+int Predator::BRCR;
 
 void Predator::update(float time) //функция "оживления" объекта класса. update - обновление. принимает в себя время SFML , вследствие чего работает бесконечно, давая персонажу движение.
 {
     lifeTimer+=time;
-    //if (lifeTimer>20000) alive = false;
+    if (lifeTimer>10000) {
+        if (rand()%(int(100000000/lifeTimer)) == 0
+        && PredatorsList.size()>4) alive = false;
+        if (rand()%(int(10000000000/lifeTimer)) == 0
+        && PredatorsList.size()<=4) alive = false;
+    }
+
+    if ((PredatorsList.size()>13 && rand()%(13000/PredatorsList.size()) == 0) ||
+        (PredatorsList.size()>8 &&
+        (Herbivore::HerbivoresList.size() / PredatorsList.size()) <= 1
+        && rand()%(100) == 0)) alive = false;
+
+    if (!ableToMove) {
+        digestionTimer+=time;
+        if (digestionTimer > 1000) ableToMove = true;
+        return;
+    }
 
     dx = speed * cos(dir*3.14159265358979323846/180);
     dy = -speed * sin(dir*3.14159265358979323846/180);
-    //if (dir>=0 && dir<=180)
     sprite.setRotation(90-dir);
-    //if (dir>180 && dir<360) sprite.setRotation()
     x += dx*time;
     y += dy*time;
     sprite.setPosition(x,y);
+    if (int(y / 32)<0 || int(x / 32)<0 || int(y / 32)>=HEIGHT_MAP || int(x / 32)>=WIDTH_MAP) {
+        alive = false;
+        return;
+    }
     interactionWithHerbivores();
-    if (hunger>1) {
+    if (hunger>1 && BRCR<10 && PredatorsList.size()<40) {
         hunger = 0;
+        BRCR++;
         replication();
     }
     interactionWithMap();
@@ -28,16 +48,14 @@ void Predator::update(float time) //функция "оживления" объе
 
 void Predator::interactionWithMap()
 {
-    //std::cout << "m\n";
+    if (!alive) return;
     if (TileMap[int(y / 32)][int(x / 32)] == '3' ||
         TileMap[int(y / 32)][int(x / 32)] == '1') {
         dir = 360-dir;
-        std::cout << "ya daun\n";
     }
 
     if (TileMap[int(y / 32)][int(x / 32)] == '0' ||
         TileMap[int(y / 32)][int(x / 32)] == '2') {
-        std::cout << "neeee\n";
         if (dir>180)
             dir = 180 - dir + 360;
         else
@@ -47,10 +65,14 @@ void Predator::interactionWithMap()
 
 void Predator::interactionWithHerbivores() {
     for (Herbivore* herbivore: Herbivore::HerbivoresList) {
-        if (herbivore->getRect().intersects(this->getRect())) {
+        if (herbivore->getRect().intersects(this->getRect()) && herbivore->isAlive()) {
             herbivore->kill();
-            lifeTimer-=20000;
+            lifeTimer+=5500;
             hunger++;
+            digestionTimer = 0;
+            x = herbivore->getX(); y = herbivore->getY();
+            sprite.setPosition(x,y);
+            ableToMove = false;
             break;
         }
     }
@@ -66,15 +88,20 @@ void Predator::replication() {
 }
 
 void Predator::PredatorsUpdate(const float currentFrame, const float time) {
-    std::list<Predator *>::iterator curr;
-    for (curr = PredatorsList.begin(); curr != PredatorsList.end(); curr++) {
-        (*curr)->nextTexture(currentFrame);
-        (*curr)->update(time);
-        if (!(*curr)->alive) {
-            PredatorsList.erase(curr);
-            delete (*curr);
+    //std::list<Predator *>::iterator curr;
+    bool needNew = false;
+    for (Predator* curr:PredatorsList) {
+        curr->nextTexture(currentFrame);
+        curr->update(time);
+        if (!curr->alive) {
+            //PredatorsList.erase(curr);
+            delete curr;
+            needNew = true;
+            break;
         }
     }
+    if (needNew) { PredatorsUpdate(currentFrame,time); return; }
+    BRCR = 0;
 }
 
 int Predator::nearestHerbivore(float x, float y, int dir) {

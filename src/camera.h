@@ -1,11 +1,11 @@
 #include <SFML/Graphics.hpp>
 
-sf::View view; //объявили sfml объект "вид", который и является камерой
+sf::View view;
 float cameraSpeed = 0.2f;
 float currentCameraSize = 1;
-float zoomSpeed = 0.001f;
+float zoomSpeed = 0.01f;
 
-void changeView(float time, int mapWidth, int mapHeight) { //функция для перемещения камеры по карте. принимает время sfml
+void changeView(float time, int mapWidth, int mapHeight) {
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::D)) {
         view.move(cameraSpeed*time*currentCameraSize, 0);
     }
@@ -25,11 +25,11 @@ void changeView(float time, int mapWidth, int mapHeight) { //функция дл
     }
 
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::J) && currentCameraSize < 1) {
-        view.zoom(1 + zoomSpeed); //масштабируем, уменьшение
+        view.zoom(1 + zoomSpeed);
         currentCameraSize *= (1 + zoomSpeed);
     }
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::H) && currentCameraSize > 0.1) {
-        view.zoom(1 - zoomSpeed); //масштабируем, увеличение
+        view.zoom(1 - zoomSpeed);
         currentCameraSize *= (1 - zoomSpeed);
     }
 }

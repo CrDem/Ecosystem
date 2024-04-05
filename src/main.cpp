@@ -12,18 +12,16 @@ void createHerbivores(int amount);
 void createPlants(int amount);
 
 int main() {
-    Image map_image;//объект изображения для карты
-    map_image.loadFromFile("C:/Users/Anton/CLionProjects/erg/Ecosystem/textures/map3.png");//загружаем файл для карты
-    Texture map;//текстура карты
-    map.loadFromImage(map_image);//заряжаем текстуру картинкой
-    Sprite s_map;//создаём спрайт для карты
-    s_map.setTexture(map);//заливаем текстуру спрайтом
+    Image map_image;
+    map_image.loadFromFile("C:/Users/Anton/CLionProjects/erg/Ecosystem/textures/map3.png");
+    Texture map;
+    map.loadFromImage(map_image);
+    Sprite s_map;
+    s_map.setTexture(map);
 
     sf::RenderWindow window(
     sf::VideoMode(startSettings::windowWidth, startSettings::windowHeight),
-    "biocenosis");
-    sf::CircleShape shape(200.f);
-    shape.setFillColor(sf::Color::Red);
+    "biocenosis",sf::Style::Fullscreen);
 
     float updateDirTimer = 0;
     float CurrentFrame = 0; //хранит текущий кадр
@@ -45,6 +43,10 @@ int main() {
         while (window.pollEvent(event)) {
             if (event.type == sf::Event::Closed)
                 window.close();
+        }
+
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape)) {
+            window.close();
         }
 
         if (updateDirTimer>200){
@@ -82,9 +84,7 @@ int main() {
         Herbivore::drawHerbivores(&window);
         Predator::drawPredators(&window);
         changeView(time, startSettings::windowWidth, startSettings::windowHeight);
-        //std::cout << "currentCameraSize:" << currentCameraSize << '\n';
         window.display();
-        //std::cout << Predator::getAmountOfPredators() << std::endl;
     }
 
     return 0;
@@ -104,7 +104,7 @@ void createHerbivores(int amount) {
     image.loadFromFile("C:/Users/Anton/CLionProjects/erg/Ecosystem/textures/herbivore texture.png");
     for (int i = 0; i < amount; ++i) {
         new Herbivore (image,rand()%(startSettings::windowWidth-128)+64, //64 32
-                      rand()%(startSettings::windowHeight-128)+64,32,32);
+                      rand()%(startSettings::windowHeight-128)+64,19,19);
     }
 }
 

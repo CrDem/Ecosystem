@@ -3,18 +3,23 @@
 #include <list>
 #include <iostream>
 #include "Creature.h"
+#include "map.h"
 
 using namespace sf;
 class Predator: public Creature {
 private:
     static std::list<Predator*> PredatorsList;
+    static int BRCR;
 public:
     Predator(Image& image,float X, float Y, float W, float H):Creature(image,X,Y,W,H){
         PredatorsList.insert(PredatorsList.end(),this);
-        w -= 15; h -= 15;//высота и ширина
+        w -= 15; h -= 15;
         sprite.setTextureRect(IntRect(0, 0, w, h));
         sprite.setOrigin(16,16);
         sprite.setPosition(x,y);
+    }
+    ~Predator(){
+        PredatorsList.erase(std::find(PredatorsList.begin(), PredatorsList.end(), this));
     }
 
     void update(float time);
@@ -24,6 +29,9 @@ public:
         for (Predator* curr:PredatorsList) {
             window->draw(curr->sprite);
         }
+    }
+    bool isOnMap(int x, int y) {
+        return (x>32 && y>32 && x<(WIDTH_MAP-1)*32 && y<(HEIGHT_MAP-1)*32);
     }
     static void updateDirPredators() {
         for (Predator* curr:PredatorsList) {
@@ -38,7 +46,8 @@ public:
         dir = DIR;
     }
     void nextTexture(float currentFrame) {
-        sprite.setTextureRect(IntRect(32 * (int(currentFrame)%3), 0, 32, 32));
+        if (ableToMove)
+            sprite.setTextureRect(IntRect(32 * (int(currentFrame)%3), 0, 32, 32));
     }
     static unsigned long long int getAmountOfPredators() {
         return PredatorsList.size();
